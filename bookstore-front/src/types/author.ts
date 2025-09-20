@@ -1,8 +1,8 @@
 export interface Author {
-    id?: number;            // opcional al crear
+    id: number;            
     name: string;
     description: string;
-    birthDate: string;      // o Date, según el backend
+    birthDate: Date;      
     image: string;
   }
   

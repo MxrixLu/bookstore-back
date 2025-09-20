@@ -7,7 +7,7 @@ export default function AuthorLayout(
     const routes = [
         {name: "Lista de Autores", path: "/authors"}, 
         {name: "Crear autor", path: "/authors/create"}, 
-        {name: "Eliminar autor", path: "/authors/delete"}, 
+        {name: "Favoritos", path: "/authors/favorites"},
     ]; 
 
     return (

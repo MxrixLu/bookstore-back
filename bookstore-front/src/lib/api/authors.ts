@@ -39,3 +39,12 @@ export async function updateAuthor(id: string, author: Author){
         body: JSON.stringify(author),
     });
 }
+
+export async function deleteAuthor(id: string){
+    const res = await fetch(`http://127.0.0.1:8080/api/authors/${id}`, {
+        method: "DELETE",
+    });
+    if (!res.ok) {
+        throw new Error(`Error ${res.status}`);
+    }
+}
