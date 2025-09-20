@@ -1,6 +1,5 @@
 "use client";
-import React from "react";
-import { useForm } from "react-hook-form";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createAuthor } from "@/lib/api/authors";
 
@@ -12,58 +11,82 @@ type FormValues ={
     image: string;
 }
 export default function CreateAuthorPage(){
-    const {register, handleSubmit, formState: {errors, isSubmitting}} = useForm<FormValues>();
     const router = useRouter();
-    const onSubmit = async (data: FormValues) => {
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [birthDate, setBirthDate] = useState("");
+    const [image, setImage] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const newErrors: { [key:string]: string } = {};
+
+        if (!name.trim()) newErrors.name = "El nombre es requerido";
+        if (!description.trim()) newErrors.description = "La descripción es requerida";
+        if (!birthDate.trim()) newErrors.birthDate = "La fecha de nacimiento es requerida";
+        if (!image.trim()) newErrors.image = "La imagen es requerida";
+
+        if(Object.keys(newErrors).length > 0){
+            setErrors(newErrors);
+            return;
+        }
+
+        setIsSubmitting(true);
         try{
-            const newAuthor = await createAuthor(data);
+            await createAuthor({name, description, birthDate, image});
             router.push(`/authors/`);
         }catch(error){
             console.error("Error al crear el autor", error);
             alert("Error al crear el autor");
+        }finally{
+            setIsSubmitting(false);
         }
-    }; 
+        }
     return (
         <section className="mx-auto max-w-md rounded-xl bg-white p-6shadow-sm">
             <h1 className="text-2xl font-bold mb-4 text-blue-600">Crear nuevo autor</h1>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
                 <div> 
                     <label className= "block text-sm font-medium text-gray-700">Nombre</label>
                     <input 
-                    {...register("name", {required: "El nombre es requerido"})}
-                    className="w-full rounded border p-2" />
+                    value={name}
+                    onChange={(e) => setName(e.target.value)} />
                     {errors.name && (
-                        <p className="text-red-500">{errors.name.message}</p>
+                        <p className="text-red-500">{errors.name}</p>
                     )}
                 </div>
                 <div> 
                     <label className= "block text-sm font-medium text-gray-700">Descripcion</label>
                     <input 
-                    {...register("description", {required: "La descripción del autor es requerida"})}
-                    className="w-full rounded border p-2" />
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)} />
                     {errors.description && (
-                        <p className="text-red-500">{errors.description.message}</p>
+                        <p className="text-red-500">{errors.description}</p>
                     )}
                 </div>
                 <div> 
                     <label className= "block text-sm font-medium text-gray-700">Fecha de nacimiento</label>
                     <input 
                     type="date"
-                    {...register("birthDate", {required: "La fecha de nacimiento es requerida"})}
-                    className="w-full rounded border p-2" />
+                    value={birthDate}
+                    onChange={(e) => setBirthDate(e.target.value)} />
                     {errors.birthDate && (
-                        <p className="text-red-500">{errors.birthDate.message}</p>
+                        <p className="text-red-500">{errors.birthDate}</p>
                     )}
                 </div>
                 <div> 
                     <label className= "block text-sm font-medium text-gray-700">Imagen del autor</label>
                     <input 
                     type = "url"
-                    {...register("image", {required: "La imagen del autor es requerida"})}
-                    className="w-full rounded border p-2" />
+                    value={image}
+                    onChange={(e) => setImage(e.target.value)} />
                     {errors.image && (
-                        <p className="text-red-500">{errors.image.message}</p>
+                        <p className="text-red-500">{errors.image}</p>
                     )}
                 </div>
                 < button 
