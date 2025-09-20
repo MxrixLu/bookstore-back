@@ -21,3 +21,21 @@ export async function createAuthor(author: Author){
     const newAuthor = await res.json();
     return newAuthor;
 }
+
+export async function getAuthor(id: string){
+    const res = await fetch(`http://127.0.0.1:8080/api/authors/${id}`, {
+        next: {revalidate:60},
+    });
+    const author = await res.json();
+    return author;
+}
+
+export async function updateAuthor(id: string, author: Author){
+    const res = await fetch(`http://127.0.0.1:8080/api/authors/${id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(author),
+    });
+}

@@ -2,6 +2,7 @@
 
 import {useState, useEffect} from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 type Author ={
     id: number; 
@@ -13,9 +14,12 @@ type Author ={
 
 export default function AuthorCard({author}: {author: Author}){
     const [isFavorite, setIsFavorite] = useState(false);
-
+    const router = useRouter();
     const toogleFavorite = () => {
         setIsFavorite(!isFavorite);
+    }
+    const handleEdit = () => {
+        router.push(`/authors/edit/${author.id}`);
     }
 
     return (
@@ -32,6 +36,15 @@ export default function AuthorCard({author}: {author: Author}){
                 }
                 >
                     {isFavorite ? "★" : "☆"}
+                </button>
+                <button 
+                onClick={handleEdit}
+                aria-label={
+                    'Editar ${author.name}'
+                }
+                className={"text-black"}
+                >
+                    {"✏️" + author.name}
                 </button>
         </div>
         <Image src={author.image} alt={author.name} width={100} height={100} />
